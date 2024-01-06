@@ -8,6 +8,80 @@ root = Tk()
 root.geometry('950x552+150+150')
 root.iconbitmap('img/store-64.ico')
 root.title('Market tools for Building')
+# ============ Price ================
+menu = {
+    0:['Hammer',20]
+    ,1:['Drill',30]
+    ,2:['Saw',18],
+    3:['Mixer',30],
+    4:['Welder',30],
+    5:['malte',5],
+    6:['Plumber',30],
+    7:['rabsh',15],
+    8:['BOOM',3],
+    9:['wood',1],
+    10:['Carpenter',300],
+    11:['Muddy',320]
+}
+def bill():
+    root.geometry('1205x552')
+    f4=Frame(root,bg='#5f7161',width=250,height=434,bd=2,relief=GROOVE)
+    f4.place(x=950,y=1)
+    
+    L_name = Label(f4,text="Name : ",bg='#5f7161',fg='white')
+    L_phone =Label(f4,text="Phone : ",bg='#5f7161',fg='white')
+    L_address=Label(f4,text="Address : ",bg='#5f7161',fg='white')
+    L_total=Label(f4,text="Total : ",bg='#5f7161',fg='white')
+    L_Date=Label(f4,text="Date : ",bg='#5f7161',fg='white')
+    L_imge=Label(f4,image= image_menu13,bg='#5f7161')
+
+    L_name.place(x=0,y=10)
+    L_phone.place(x=0,y=40)
+    L_address.place(x=0,y=70)
+    L_total.place(x=0,y=100)
+    L_Date.place(x=0,y=130)
+    L_imge.place(x=110,y=320)
+
+    E_name =Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+    E_phone =Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+    E_address=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+    E_total=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+    E_date=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+
+    E_name.place(x=45,y=10)
+    E_phone.place(x=45,y=40)
+    E_address.place(x=45,y=70)
+    E_total.place(x=45,y=100)
+    E_date.place(x=45,y=130)
+    
+    
+    add=Button(f4,text='ADD',width=31,cursor='hand2',bg='#eddbc0')
+    clear=Button(f4,text='Clear',width=31,cursor='hand2',bg='#eddbc0')
+    search=Button(f4,text='Search',width=31,cursor='hand2',bg='#eddbc0')
+    delet=Button(f4,text='Delet',width=31,cursor='hand2',bg='#eddbc0')
+    add.place(x=12,y=160)
+    clear.place(x=12,y=200)
+    search.place(x=12,y=240)
+    delet.place(x=12,y=280)
+    
+
+
+    
+
+    total = 0
+
+    for item in trv.get_children():
+        trv.delete(item)
+    for i in range(len(sb)):
+        if(int(sb[i].get())>0):
+            price =int(sb[i].get())*menu[i][1]
+            total += price
+            myst=(str(menu[i][1]),str(sb[i].get()),str(price))
+            trv.insert('', 'end',iid=i,text=menu[i][0], values=myst)
+    
+
+
+
 # ============ FRAMES ===============
 # ============ frame 1 ==============
 f1 = Frame(root,bg='silver')
@@ -19,6 +93,17 @@ f2.place(x=610, y=1, width=343, height=550)
 trv = ttk.Treeview(f2,selectmod='browse')
 
 trv.place(x=0, y=0, width=340, height=550)
+trv["columns"]=(1,2,3)
+trv.column("0",width=10,anchor='c')
+
+trv.column("1",width=10,anchor='center')
+trv.column("2",width=10,anchor='center')
+trv.column("3",width=10,anchor='center')
+
+trv.heading("#0", text="Building")
+trv.heading("#1", text="Price")
+trv.heading("#2", text="Quantity")
+trv.heading("#3", text="Total")
 
 # ============ LABEL ================
 title = Label(f1,text='Building equipment sale project',font=('Perpetua',16),fg='white',bg='#5f7161')# Lucida Calligraphy italic
@@ -36,6 +121,8 @@ image_menu9 =  image=PhotoImage(file='img/icons8-hammer-60.png')
 image_menu10 =  image=PhotoImage(file='img/icons8-saw-32.png')
 image_menu11 =  image=PhotoImage(file='img/icons8-wagon-32.png') 
 image_menu12 =  image=PhotoImage(file='img/icons8-broom-64.png')
+image_menu13 = image=PhotoImage(file='img/icons8-tellonym-50.png')
+
 #========== BUTONNS =================
 button_menu1 = Button(f1,bg='#efead8',bd=1,relief=SOLID,cursor='hand2',width=88,height=85,image=image_menu1,text='Hammer',compound=TOP)
 button_menu2 = Button(f1,bg='#efead8',bd=1,relief=SOLID,cursor='hand2',width=88,height=85,image=image_menu2,text='Saw',compound=TOP)
@@ -116,7 +203,7 @@ sb.append(sb10)
 sb.append(sb11)
 sb.append(sb12)
 
-B1 = Button(f1,text="buying",font=font1,bd=1,bg='#6d8b74')
+B1 = Button(f1,text="buying",font=font1,bd=1,bg='#6d8b74',command=bill)
 B2 = Button(f1,text="New bill",font=font1,bd=1,bg='#6d8b74')
 B3 = Button(f1,text="Rent materials",font=font1,bd=1,bg='#6d8b74')
 B4 = Button(f1,text="Close the program",font=font1,bd=1,bg='#6d8b74')
