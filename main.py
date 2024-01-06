@@ -8,6 +8,21 @@ root = Tk()
 root.geometry('950x552+150+150')
 root.iconbitmap('img/store-64.ico')
 root.title('Market tools for Building')
+now = datetime.datetime.now()
+date=now.strftime("%Y-%m-%d")
+time=now.strftime("%I:%M %p")
+# ============ EXCEL ================
+wb =Workbook()
+ws = wb.active
+ws.title = 'customer'
+ws["A1"] = 'Full Name'
+ws["B1"] = 'Phone'
+ws["C1"] = 'Address'
+ws["D1"] = 'Total'
+ws["E1"] = 'Date'
+ws["F1"] = 'Time'
+wb.save('Custemor.xlsx')
+
 # ============ Price ================
 menu = {
     0:['Hammer',20]
@@ -24,6 +39,13 @@ menu = {
     11:['Muddy',320]
 }
 def bill():
+    global E_name
+    global E_phone
+    global E_address
+    global E_total
+    global E_date
+    global E_time
+
     root.geometry('1205x552')
     f4=Frame(root,bg='#5f7161',width=250,height=434,bd=2,relief=GROOVE)
     f4.place(x=950,y=1)
@@ -33,6 +55,7 @@ def bill():
     L_address=Label(f4,text="Address : ",bg='#5f7161',fg='white')
     L_total=Label(f4,text="Total : ",bg='#5f7161',fg='white')
     L_Date=Label(f4,text="Date : ",bg='#5f7161',fg='white')
+    L_time=Label(f4,text="Date : ",bg='#5f7161',fg='white')
     L_imge=Label(f4,image= image_menu13,bg='#5f7161')
 
     L_name.place(x=0,y=10)
@@ -40,6 +63,7 @@ def bill():
     L_address.place(x=0,y=70)
     L_total.place(x=0,y=100)
     L_Date.place(x=0,y=130)
+    L_time.place(x=0,y=160)
     L_imge.place(x=110,y=320)
 
     E_name =Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
@@ -47,21 +71,23 @@ def bill():
     E_address=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
     E_total=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
     E_date=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
+    E_time=Entry(f4,width=20,font=font1,justify=CENTER,bg='#5f7161',fg='white')
 
     E_name.place(x=45,y=10)
     E_phone.place(x=45,y=40)
     E_address.place(x=45,y=70)
     E_total.place(x=45,y=100)
     E_date.place(x=45,y=130)
+    E_time.place(x=45,y=160)
     
     
-    add=Button(f4,text='ADD',width=31,cursor='hand2',bg='#eddbc0')
-    clear=Button(f4,text='Clear',width=31,cursor='hand2',bg='#eddbc0')
-    search=Button(f4,text='Search',width=31,cursor='hand2',bg='#eddbc0')
-    delet=Button(f4,text='Delet',width=31,cursor='hand2',bg='#eddbc0')
-    add.place(x=12,y=160)
-    clear.place(x=12,y=200)
-    search.place(x=12,y=240)
+    add=Button(f4,text='ADD',width=31,cursor='hand2',bg='#eddbc0',command=save)
+    clear=Button(f4,text='Clear',width=31,cursor='hand2',bg='#eddbc0',command=E_clear)
+    search=Button(f4,text='Search',width=31,cursor='hand2',bg='#eddbc0',command=S_search)
+    delet=Button(f4,text='Delet',width=31,cursor='hand2',bg='#eddbc0',command=D_cust)
+    add.place(x=12,y=190)
+    clear.place(x=12,y=220)
+    search.place(x=12,y=250)
     delet.place(x=12,y=280)
     
 
@@ -78,10 +104,73 @@ def bill():
             total += price
             myst=(str(menu[i][1]),str(sb[i].get()),str(price))
             trv.insert('', 'end',iid=i,text=menu[i][0], values=myst)
-    
-
-
-
+    finall = total
+    E_total.insert('1',str(finall) + '$')
+    E_date.insert('1',str(date))
+    E_time.insert('1',str(time))
+def clear():
+    for item in trv.get_children():
+        trv.delete(item)
+    E_name.delete('0',END)
+    E_phone.delete('0',END)
+    E_address.delete('0',END)
+    E_total.delete('0',END)
+    E_date.delete('0',END)
+    E_time.delete('0',END)
+def E_clear():
+    E_name.delete('0',END)
+    E_phone.delete('0',END)
+    E_address.delete('0',END)
+    E_total.delete('0',END)
+    E_date.delete('0',END)
+    E_time.delete('0',END)
+def save():
+    name = E_name.get()
+    phone = E_phone.get()
+    address = E_address.get()
+    total = E_total.get()
+    date = E_date.get()
+    time = E_time.get()
+    excel=openpyxl.load_workbook('Custemor.xlsx')
+   
+    file = excel.active
+   
+    file.cell(column=1,row=file.max_row+1,value=name)
+    file.cell(column=2,row=file.max_row,value=phone)
+    file.cell(column=3,row=file.max_row,value=address)
+    file.cell(column=4,row=file.max_row,value=total)
+    file.cell(column=5,row=file.max_row,value=date)
+    file.cell(column=6,row=file.max_row,value=time)
+    excel.save('Custemor.xlsx')
+# === fill phone by search name in E_phone
+def S_search():
+    name = E_name.get()
+    excel=openpyxl.load_workbook('Custemor.xlsx')
+    file = excel.active
+    for i in range(file.max_row):
+        if(file.cell(column=1,row=i+1).value==name):
+            E_phone.insert('0',file.cell(column=2,row=i+1).value)
+            E_address.insert('0',file.cell(column=3,row=i+1).value)
+            E_total.insert('0',file.cell(column=4,row=i+1).value)
+            E_date.insert('0',file.cell(column=5,row=i+1).value)
+            E_time.insert('0',file.cell(column=6,row=i+1).value)
+            break
+# ====== delet  from Custemor.xlsx  name phone address Total date time by name ======
+def D_cust():
+    name = E_name.get()
+    excel=openpyxl.load_workbook('Custemor.xlsx')
+    file = excel.active
+    for i in range(file.max_row):
+        if(file.cell(column=1,row=i+1).value==name):
+            E_name.delete('0',END)
+            E_phone.delete('0',END)
+            E_address.delete('0',END)
+            E_total.delete('0',END)
+            E_date.delete('0',END)
+            E_time.delete('0',END)
+            file.delete_rows(i+1)
+            excel.save('Custemor.xlsx')
+            break
 # ============ FRAMES ===============
 # ============ frame 1 ==============
 f1 = Frame(root,bg='silver')
@@ -204,9 +293,9 @@ sb.append(sb11)
 sb.append(sb12)
 
 B1 = Button(f1,text="buying",font=font1,bd=1,bg='#6d8b74',command=bill)
-B2 = Button(f1,text="New bill",font=font1,bd=1,bg='#6d8b74')
+B2 = Button(f1,text="New bill",font=font1,bd=1,bg='#6d8b74',command=clear)
 B3 = Button(f1,text="Rent materials",font=font1,bd=1,bg='#6d8b74')
-B4 = Button(f1,text="Close the program",font=font1,bd=1,bg='#6d8b74')
+B4 = Button(f1,text="Close the program",font=font1,bd=1,bg='#6d8b74',command=exit)
 
 B1.place(x=0,y=480)
 B2.place(x=110,y=480)
